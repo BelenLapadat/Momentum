@@ -12,14 +12,14 @@ It serves two closely related audiences:
 The core experience is chronological views that make **simultaneity and proximity in time** obvious—calm and intentional. Users manage **multiple timelines** (e.g. one novel, one historical period) from a simple home dashboard.
 
 **Working product name:** Momentum  
-**Status:** Planning — MVP product, UX, stack, and R1–R12 locked; ready to scaffold  
-**Last updated:** 2026-09-24
+**Status:** MVP implemented locally and on GitHub — core CRUD, timeline views, import/export, and first UI polish pass (2026-09-25). Deploy and deeper polish still open.  
+**Last updated:** 2026-09-25
 
 ---
 
 ## Open decisions
 
-Most decisions are locked, including R1–R12. Build can start.
+Most decisions are locked, including R1–R12. Implementation has started; remaining work is polish, deploy, and post-MVP.
 
 | # | Decision | Options | Status |
 |---|----------|---------|--------|
@@ -690,27 +690,28 @@ Accepted leans:
 - [x] Lock implementation leans R1–R12 (placement, sort, import, focus, plain text, confirms, prefs, host, etc.)
 
 ### Phase 1 — Foundation
-- [ ] Scaffold Vite + React + TypeScript + Tailwind
-- [ ] Define `Timeline` + `Event` types (`timelineId` on events) with Zod; plain-text body
-- [ ] Year/month/day validation + sort helpers (R1/R2)
-- [ ] Dexie schema: `timelines`, `events` + repositories CRUD
-- [ ] Persist scale/orientation in `localStorage` (R8)
-- [ ] Dashboard shell (list by updatedAt desc — R12; empty state; new timeline)
-- [ ] Timeline view shell + scale control + orientation toggle + search field
+- [x] Scaffold Vite + React + TypeScript + Tailwind
+- [x] Define `Timeline` + `Event` types (`timelineId` on events) with Zod; plain-text body
+- [x] Year/month/day validation + sort helpers (R1/R2)
+- [x] Dexie schema: `timelines`, `events` + repositories CRUD
+- [x] Persist scale/orientation in `localStorage` (R8)
+- [x] Dashboard shell (list by updatedAt desc — R12; empty state; new timeline)
+- [x] Timeline view shell + scale control + orientation toggle + search field
 
 ### Phase 2 — MVP timelines + events
-- [ ] Timeline CRUD on dashboard (create, open, update, delete with confirm + cascade — R6)
-- [ ] Create / edit / delete event (detail view); Save returns to parent timeline; dirty-back prompt (R7)
-- [ ] On date edit, timeline re-sorts (R2); year-only cue at fine scales (R1)
-- [ ] Timeline markers: title + date only; title opens detail; proximity for concurrency (R10)
-- [ ] Explicit scale modes: Year / Month / Day
-- [ ] Focus controls: year jump + prev/next with year/month/day cursor (R4)
-- [ ] Vertical and horizontal layouts driven by user preference
-- [ ] Search by title + body within open timeline; filter + highlight
-- [ ] Export/import JSON: ask merge vs new timeline (R11); conflicts by id only (R3)
-- [ ] Export single event as `.docx` from detail
-- [ ] Basic responsive layout
-
+- [x] Timeline CRUD on dashboard (create, open, update, delete with confirm + cascade — R6)
+- [x] Create / edit / delete event (detail view); Save returns to parent timeline; dirty-back prompt (R7)
+- [x] On date edit, timeline re-sorts (R2); year-only / unknown-month display refined (see UX refinements)
+- [x] Timeline markers: title + date only; title opens detail; proximity for concurrency (R10)
+- [x] Explicit scale modes: Year / Month / Day
+- [x] Focus controls: year jump + prev/next with year/month/day cursor (R4)
+- [x] Vertical and horizontal layouts driven by user preference
+- [x] Search by title + body within open timeline; filter + highlight
+- [x] Export/import JSON: ask merge vs new timeline (R11); conflicts by id only (R3)
+- [x] Export single event as `.docx` from detail
+- [x] Basic responsive layout
+- [x] Impossible calendar days rejected on save (e.g. 30 Feb); invalid stored events purged on load
+- [x] First UI polish pass (gold/neutral theme, Manrope, year grouping, vertical year circles)
 ### Phase 3 — Polish
 - [ ] Threads or tags for parallel strands
 - [ ] Year-range filter / jump refinements
@@ -743,16 +744,37 @@ Accepted leans:
 - User can export/import a timeline as JSON (ask merge vs new; id conflicts: keep/overwrite)
 - Deletes of timelines/events require confirmation; unsaved event edits prompt on back
 - Dashboard lists timelines with most recently updated first
-- Year-only events appear at month 1 / day 1 with a year-only cue when zoomed in
+- Year-only events appear at month 1 / day 1 for placement when zoomed in (R1); in the year list UI they group under **sometime this year** when the year has multiple events
 - Saving an event returns the user to its timeline
 - Editing an event’s date moves it to the correct place on that timeline automatically
 - Search by content (title + body) within a timeline filters and highlights matches
 - Can add events in widely different years (e.g. −44, 1066, 2145) and see them ordered correctly
 - Year is entered by typing—not blocked by a modern datepicker range
+- Impossible days (e.g. 30 Feb) cannot be saved
 - Can add 20+ events across timelines and browse without lag
 - Create/edit/delete works reliably after refresh for both timelines and events
 - Dashboard and timeline remain readable on mobile width
 - Someone new can create a timeline and add a first event in under a minute
+
+---
+
+## UX refinements (locked 2026-09-25)
+
+Display and interaction details implemented during the first build pass:
+
+| Topic | Decision |
+|-------|----------|
+| Storage | Dexie/IndexedDB is the source of truth; portable files only via JSON / `.docx` export |
+| Date display order | **Year → month → day** (e.g. `1815 Jun 18`) |
+| Month labels | Abbreviations (`Jan`…`Dec`), not zero-padded numbers |
+| Same-year grouping | Show the **year once**; list events under it |
+| Unknown month | If the year has **more than one** event, unknown-month events sit under an **h3 “sometime this year”** + `ul`, listed **above** dated events in that year |
+| Single unknown-month event | No “sometime this year” heading; event sits under the year alone |
+| Vertical year marker | Year number in an **opaque circle** on the axis; the axis line runs behind and is masked by the circle |
+| Calendar validation | Reject impossible days on save; purge invalid stored events on dashboard/timeline load |
+| Dashboard actions | Open / Edit / Delete as **icon buttons** (with aria-labels) |
+| Visual direction | Gold + stone neutrals; **Manrope** sans-serif throughout |
+| Routing | Data router (`createBrowserRouter`); unsaved leave uses `beforeunload` + confirm (not `useBlocker` alone) |
 
 ---
 
@@ -778,8 +800,11 @@ Accepted leans:
 
 ## Next steps
 
-1. Scaffold the Vite + React + TypeScript repo in `momentum`.
-2. Add Dexie + repositories, then build Phase 1 → Phase 2 (Dashboard first, then timeline view) using locked R1–R12 behavior.
+1. Continue manual QA and small UX fixes (see [`DEVELOPMENT.md`](./DEVELOPMENT.md)).
+2. Deploy the static Vite build (Cloudflare Pages or equivalent).
+3. Only then pick Phase 3 / Phase 4 items deliberately.
+
+Track day-to-day build progress in [`DEVELOPMENT.md`](./DEVELOPMENT.md).
 
 ---
 

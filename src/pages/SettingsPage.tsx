@@ -144,7 +144,7 @@ export function SettingsPage() {
       <h1 className="brand m-0 mt-3 text-4xl">Settings</h1>
       <p className="text-[var(--ink-muted)]">{timeline.title}</p>
 
-      <section className="surface mt-6 rounded-2xl p-6">
+      <section className="surface mt-6 rounded-xl p-6">
         <h2 className="brand m-0 text-2xl">Appearance</h2>
         <p className="mt-1 text-sm text-[var(--ink-muted)]">
           Preferences are stored in this browser.
@@ -167,7 +167,7 @@ export function SettingsPage() {
         </div>
       </section>
 
-      <section className="surface mt-4 rounded-2xl p-6">
+      <section className="surface mt-4 rounded-xl p-6">
         <h2 className="brand m-0 text-2xl">Data</h2>
         <p className="mt-1 text-sm text-[var(--ink-muted)]">
           Export or import this timeline as JSON. Single-event Word export is on
@@ -208,7 +208,7 @@ export function SettingsPage() {
         ) : null}
       </section>
 
-      <section className="surface mt-4 rounded-2xl p-6">
+      <section className="surface mt-4 rounded-xl p-6">
         <h2 className="brand m-0 text-2xl">About</h2>
         <p className="mt-2 text-[var(--ink-muted)]">
           Momentum — local Dashboard; multiple timelines; data stays on this

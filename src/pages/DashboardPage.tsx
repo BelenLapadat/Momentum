@@ -5,6 +5,7 @@ import { eventRepository } from '../data/eventRepository'
 import type { Timeline } from '../types'
 import { TimelineFormModal } from '../components/TimelineFormModal'
 import { ConfirmDialog } from '../components/ConfirmDialog'
+import { IconDelete, IconEdit, IconOpen } from '../components/Icons'
 
 function formatUpdated(iso: string): string {
   const date = new Date(iso)
@@ -23,6 +24,7 @@ export function DashboardPage() {
   const [deleting, setDeleting] = useState<Timeline | null>(null)
 
   const refresh = useCallback(async () => {
+    await eventRepository.purgeInvalid()
     const list = await timelineRepository.list()
     setTimelines(list)
     const nextCounts: Record<string, number> = {}
@@ -42,10 +44,10 @@ export function DashboardPage() {
   return (
     <div className="app-shell mx-auto max-w-3xl">
       <header className="mb-10">
-        <p className="m-0 text-sm uppercase tracking-[0.2em] text-[var(--ink-muted)]">
+        <p className="m-0 text-xs uppercase tracking-[0.22em] text-[var(--accent)]">
           Local timelines
         </p>
-        <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
+        <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
           <h1 className="brand m-0 text-5xl md:text-6xl">Momentum</h1>
           <button
             type="button"
@@ -63,7 +65,7 @@ export function DashboardPage() {
       {loading ? (
         <p className="text-[var(--ink-muted)]">Loading…</p>
       ) : timelines.length === 0 ? (
-        <div className="surface rounded-2xl px-6 py-16 text-center">
+        <div className="surface rounded-xl px-6 py-16 text-center">
           <p className="brand m-0 text-2xl">No timelines yet</p>
           <p className="mt-2 text-[var(--ink-muted)]">
             Create one to start placing events in time.
@@ -79,7 +81,7 @@ export function DashboardPage() {
       ) : (
         <ul className="m-0 flex list-none flex-col gap-3 p-0">
           {timelines.map((timeline) => (
-            <li key={timeline.id} className="surface rounded-2xl p-5">
+            <li key={timeline.id} className="surface rounded-xl p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <h2 className="brand m-0 text-2xl">{timeline.title}</h2>
@@ -93,26 +95,32 @@ export function DashboardPage() {
                     {formatUpdated(timeline.updatedAt)}
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5">
                   <Link
-                    className="btn btn-primary"
+                    className="btn btn-primary btn-icon"
                     to={`/timeline/${timeline.id}`}
+                    aria-label={`Open ${timeline.title}`}
+                    title="Open"
                   >
-                    Open
+                    <IconOpen />
                   </Link>
                   <button
                     type="button"
-                    className="btn btn-ghost"
+                    className="btn btn-ghost btn-icon"
                     onClick={() => setEditing(timeline)}
+                    aria-label={`Edit ${timeline.title}`}
+                    title="Edit"
                   >
-                    Edit
+                    <IconEdit />
                   </button>
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className="btn btn-danger btn-icon"
                     onClick={() => setDeleting(timeline)}
+                    aria-label={`Delete ${timeline.title}`}
+                    title="Delete"
                   >
-                    Delete
+                    <IconDelete />
                   </button>
                 </div>
               </div>

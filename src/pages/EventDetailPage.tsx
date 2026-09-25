@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
-import { Link, useBlocker, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { eventRepository } from '../data/eventRepository'
 import { timelineRepository } from '../data/timelineRepository'
 import type { Timeline, TimelineEvent } from '../types'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { downloadEventDocx } from '../lib/docxExport'
+import { daysInMonth, isValidCalendarDay, monthAbbrev } from '../lib/chronology'
 
 export function EventDetailPage() {
   const { timelineId = '', eventId } = useParams()
@@ -61,7 +62,15 @@ export function EventDetailPage() {
   )
   const dirty = currentSnap !== initial
 
-  const blocker = useBlocker(dirty && !saving)
+  useEffect(() => {
+    if (!dirty || saving) return
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+      e.returnValue = ''
+    }
+    window.addEventListener('beforeunload', onBeforeUnload)
+    return () => window.removeEventListener('beforeunload', onBeforeUnload)
+  }, [dirty, saving])
 
   async function handleSave(e: FormEvent) {
     e.preventDefault()
@@ -85,8 +94,19 @@ export function EventDetailPage() {
       setError('Day requires a month')
       return
     }
-    if (dayNum != null && (dayNum < 1 || dayNum > 31 || Number.isNaN(dayNum))) {
-      setError('Day must be 1–31')
+    if (dayNum != null && Number.isNaN(dayNum)) {
+      setError('Day must be a number')
+      return
+    }
+    if (
+      dayNum != null &&
+      monthNum != null &&
+      !isValidCalendarDay(yearNum, monthNum, dayNum)
+    ) {
+      const max = daysInMonth(yearNum, monthNum)
+      setError(
+        `${monthAbbrev(monthNum)} ${yearNum} only has ${max} day${max === 1 ? '' : 's'}`,
+      )
       return
     }
 
@@ -205,7 +225,7 @@ export function EventDetailPage() {
         </div>
       </div>
 
-      <form className="surface rounded-2xl p-6" onSubmit={handleSave}>
+      <form className="surface rounded-xl p-6" onSubmit={handleSave}>
         <h1 className="brand m-0 mb-6 text-3xl">
           {isNew ? 'New event' : 'Edit event'}
         </h1>
@@ -306,17 +326,6 @@ export function EventDetailPage() {
             await eventRepository.remove(eventId)
             navigate(`/timeline/${timelineId}`)
           }}
-        />
-      ) : null}
-
-      {blocker.state === 'blocked' ? (
-        <ConfirmDialog
-          title="Unsaved changes"
-          message="You have unsaved changes. Leave without saving?"
-          confirmLabel="Leave"
-          danger
-          onCancel={() => blocker.reset?.()}
-          onConfirm={() => blocker.proceed?.()}
         />
       ) : null}
     </div>

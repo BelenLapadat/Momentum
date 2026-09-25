@@ -20,6 +20,7 @@ Living checklist of work completed and work ahead. Product requirements stay in 
 - [x] Init local git, connect SSH remote, push `PLAN.md`
 - [x] Add project `README.md`
 - [x] Confirm storage model: Dexie/IndexedDB source of truth; JSON export/import for backup (not filesystem event files)
+- [x] Add this development steps checklist (`DEVELOPMENT.md`)
 
 ---
 
@@ -27,7 +28,7 @@ Living checklist of work completed and work ahead. Product requirements stay in 
 
 - [x] Vite + React + TypeScript in `momentum/` (keep `PLAN.md` / `README.md`)
 - [x] Tailwind CSS v4 + CSS variables / brand styling
-- [x] React Router routes:
+- [x] React Router routes (data router / `createBrowserRouter`):
   - `/` — Dashboard
   - `/timeline/:timelineId` — Timeline view
   - `/timeline/:timelineId/events/new` — New event
@@ -59,8 +60,9 @@ Living checklist of work completed and work ahead. Product requirements stay in 
 - [x] Save → return to timeline; date edits re-sort
 - [x] Timeline markers: title + date only; click opens detail
 - [x] Persist across refresh (Dexie)
-- [x] Dirty-back / leave prompt on unsaved event edits (R7)
+- [x] Dirty leave prompt on unsaved event edits (R7) via confirm + `beforeunload`
 - [x] Manual smoke on localhost (`npm run dev`)
+- [x] Fix Add event crash (`useBlocker` required a data router → switched approach)
 
 ---
 
@@ -70,7 +72,6 @@ Living checklist of work completed and work ahead. Product requirements stay in 
 - [x] Orientation: vertical / horizontal (same marker data)
 - [x] Persist scale + orientation in `localStorage`
 - [x] Month/Day focus: typed year jump + prev/next (R4)
-- [x] Year-only cue at fine scales (R1)
 - [x] Search: title + body; filter + highlight matches
 
 ---
@@ -82,34 +83,50 @@ Living checklist of work completed and work ahead. Product requirements stay in 
 - [x] Import conflicts by `id` only — keep vs overwrite (R3); no id → new event
 - [x] Single-event `.docx` export from detail (lazy-loaded)
 - [x] Basic responsive layout / empty states
-- [x] Commit MVP scaffold locally (`a953c36`) — not pushed yet
+- [x] Commit MVP scaffold + push to `origin/main`
 
 ---
 
-## 6. Next — harden & ship checklist
+## 6. UI / UX refinements (2026-09-25)
 
-### 6a. Verify & fix from real use
+- [x] Shift palette from green to **gold + stone neutrals**
+- [x] Dashboard Open / Edit / Delete → **icon buttons**
+- [x] Date labels: month **abbreviations**; order **year → month → day**
+- [x] Group events by year (year shown once)
+- [x] Unknown-month events: **“sometime this year”** `h3` + `ul` when the year has multiple events; listed **above** dated events
+- [x] Reject impossible calendar days (e.g. 30 Feb); purge invalid stored events so timelines still open
+- [x] Vertical year markers: opaque **circles** on the axis; line masked behind the circle
+- [x] Typography: **Manrope** minimalist sans-serif (brand + body)
+- [x] Update `PLAN.md` + this file to match today’s work
 
-- [ ] Click through full happy path again after any upcoming changes
-- [ ] Fix bugs / UX friction found in manual testing
-- [ ] Confirm extreme years (e.g. `-44`, `2145`) create, sort, and display correctly
-- [ ] Confirm delete timeline cascades events; confirm prompts feel right
+---
 
-### 6b. Quality bar before first remote push
+## 7. Next — harden & ship checklist
 
-- [ ] `npm test` green
-- [ ] `npm run build` green
-- [ ] Quick mobile-width check in browser
-- [ ] Push `main` to `origin` when ready
+### 7a. Verify & fix from real use
 
-### 6c. Small MVP follow-ups (still in scope if needed)
+- [x] Click through create timeline / add event / save path (Add event fixed)
+- [x] Confirm impossible-day validation
+- [ ] More pass on extreme years (e.g. `-44`, `2145`) in the polished UI
+- [ ] Confirm delete timeline cascades events; prompts still feel right after icon UI
+- [ ] Note any new friction from year-grouping / “sometime this year” layout
+
+### 7b. Quality bar
+
+- [x] `npm test` green (as of today’s polish)
+- [x] `npm run build` green (as of today’s polish)
+- [ ] Quick mobile-width check in browser after latest UI changes
+- [x] Push `main` to `origin` (MVP + docs already pushed; push today’s polish when ready)
+
+### 7c. Small MVP follow-ups (still in scope if needed)
 
 - [ ] Clearer empty / loading / error copy where thin
 - [ ] “Apply to all remaining conflicts” on import (optional, parked in PLAN Phase 3)
 - [ ] Keyboard shortcuts: add event / scale / search (optional)
 - [ ] Accessibility pass (focus traps in modals, labels, contrast)
+- [ ] Commit + push today’s UI polish commits
 
-### 6d. Deploy (static shell)
+### 7d. Deploy (static shell)
 
 - [ ] Set up Cloudflare Pages (or Netlify / GitHub Pages) for the Vite build
 - [ ] Document deploy steps in README
@@ -117,7 +134,7 @@ Living checklist of work completed and work ahead. Product requirements stay in 
 
 ---
 
-## 7. Later — post-MVP (from PLAN.md; do not start until MVP feels solid)
+## 8. Later — post-MVP (from PLAN.md; do not start until MVP feels solid)
 
 ### Phase 3 — Polish / power features
 
@@ -141,10 +158,10 @@ Living checklist of work completed and work ahead. Product requirements stay in 
 
 ## Suggested working order from here
 
-1. Keep using the app locally; note friction in section **6a**.
-2. Sweep **6b**, then **push to GitHub** when you say so.
-3. Deploy static host (**6d**) so you can open Momentum from any browser on this machine’s profile (data still per-browser).
-4. Only then pick items from **6c** or Phase 3/4 deliberately — avoid scope creep.
+1. Commit/push today’s UI polish when you are happy with it.
+2. Mobile-width check + any remaining 7a friction notes.
+3. Deploy static host (**7d**).
+4. Only then pick items from **7c** or Phase 3/4 deliberately — avoid scope creep.
 
 ---
 
@@ -164,4 +181,4 @@ npm run build
 
 - Events live in **IndexedDB via Dexie**, not as files on disk. Portable copies = JSON / `.docx` export.
 - UI never talks to Dexie directly; repositories are the seam for a future cloud backend.
-- Do not reopen locked MVP decisions in `PLAN.md` unless product intent changes.
+- Product locks and the 2026-09-25 UX refinement table live in [`PLAN.md`](./PLAN.md).

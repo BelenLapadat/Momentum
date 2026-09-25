@@ -6,6 +6,7 @@ import type { Orientation, Scale, Timeline, TimelineEvent } from '../types'
 import {
   eventMatchesQuery,
   isEventInFocus,
+  monthAbbrev,
   stepFocus,
   type FocusCursor,
 } from '../lib/chronology'
@@ -209,7 +210,7 @@ export function TimelinePage() {
           <p className="m-0 text-sm text-[var(--ink-muted)]">
             {scale === 'month'
               ? `Showing ${focus.year}`
-              : `Showing ${focus.year}-${String(focus.month).padStart(2, '0')}`}
+              : `Showing ${monthAbbrev(focus.month)} ${focus.year}`}
           </p>
         </div>
       ) : null}
