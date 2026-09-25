@@ -4,7 +4,7 @@ Local-first timeline app for **writers** and **history learners**. Place events 
 
 ## Status
 
-Planning complete (MVP product, UX, stack, and R1–R12 locked). Scaffolding and Phase 1 are next.
+MVP implementation in progress: Dashboard, timelines, events, scale/orientation, search, JSON import/export, and `.docx` export.
 
 Full product plan: [`PLAN.md`](./PLAN.md)
 
@@ -18,7 +18,7 @@ Full product plan: [`PLAN.md`](./PLAN.md)
 - **JSON** import/export per timeline; single-event **`.docx`** export
 - Search within a timeline (title + body)
 
-## Stack (locked)
+## Stack
 
 | Layer | Choice |
 |-------|--------|
@@ -29,24 +29,29 @@ Full product plan: [`PLAN.md`](./PLAN.md)
 | Validation | Zod |
 | Deploy | Cloudflare Pages (static shell; data stays in the browser) |
 
-## Project layout (planned)
+## Getting started
+
+```bash
+npm install
+npm run dev
+```
+
+Other scripts:
+
+```bash
+npm test        # Vitest
+npm run build   # production build
+```
+
+## Project layout
 
 ```
 src/
   pages/        # dashboard, timeline, event detail, settings
   components/
   data/         # Dexie + repositories
-  lib/          # import/export, search, date helpers
+  lib/          # chronology, import/export, search, docx, prefs
   types/
-```
-
-## Getting started
-
-App scaffolding is not in the repo yet. When Phase 1 lands:
-
-```bash
-npm install
-npm run dev
 ```
 
 ## License
